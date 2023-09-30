@@ -10,14 +10,14 @@ type TextBoxProps = {
 export default function TextBox({ scroll, docPath }: TextBoxProps){
     const [message, setMessage] = useState("");
 
-    const sendMessage = async (event) => {
+    const sendMessage = async (event: any) => {
     event.preventDefault();
     if (message.trim() === "") {
         alert("Enter valid message");
         return;
     }
-    const { uid, displayName, photoURL } = auth.currentUser;
-    await addDoc(collection(db, ...docPath), {
+    const { uid, displayName, photoURL } = auth.currentUser as any;
+    await addDoc(collection(db, docPath.join('/')), {
         text: message,
         name: displayName,
         avatar: photoURL,

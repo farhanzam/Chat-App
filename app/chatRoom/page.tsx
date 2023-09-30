@@ -16,6 +16,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/components/firebase";
 import { useSearchParams } from 'next/navigation'
 import '@/assets/globals.css';
+import { User } from 'firebase/auth';
 
 
 export default function ChatRoom() {
@@ -31,20 +32,20 @@ export default function ChatRoom() {
     useEffect(() => {
         if (!user2) return;
         const q = query(
-            collection(db, ...(getMessagesPath(user1, user2) as [])),
+            collection(db, getMessagesPath(user1, user2).join('/')),
             orderBy("createdAt", "desc"),
             limit(50)
         );
 
         // fires every time there's a database update
-        const runEveryTimeTheresADBUpdate = (QuerySnapshot) => {
-        const fetchedMessages = [];
+        const runEveryTimeTheresADBUpdate = (QuerySnapshot: any) => {
+        const fetchedMessages: any[] = [];
         // fetch messages between the two users
-        QuerySnapshot.forEach((doc) => {
+        QuerySnapshot.forEach((doc: any) => {
             fetchedMessages.push({ ...doc.data(), id: doc.id });
         });
         // sort messages by their creation time (latest messages at the end of the list)
-        const sortedMessages = fetchedMessages.sort(
+        const sortedMessages: any = fetchedMessages.sort(
             (a, b) => a.createdAt - b.createdAt
         );
         // add all messages to the messages array so they can be displayed to the user
@@ -58,7 +59,7 @@ export default function ChatRoom() {
     return (
         <>
         {
-            !user2 ? 
+            (!user2) ? 
                 <>Loading</> 
                 :
                 <main className="chat-box">
@@ -66,19 +67,19 @@ export default function ChatRoom() {
                     <div className="chat-room-header">
                         <img
                             className="chat-bubble_profile_pic"
-                            src={user2.avatar}
+                            src={(user2 as any).avatar}
                             alt="user avatar"
                             style={{borderRadius:50, height: 75, marginLeft: 15, marginRight: 15, marginTop: 5, marginBottom: 5}}
                             />
-                        <p>{user2.name}</p>
+                        <p>{(user2 as any).name}</p>
                     </div>
                     <div className="messages-wrapper">
                         {messages?.map((message) => (
-                        <Message key={message.id} user={user1} message={message} />
+                        <Message key={(message as any).id} user={user1 as User} message={message} />
                         ))}
                     </div>
                     {/* When a new message enters the chat, the screen scrolls down to the scroll div*/}
-                    <span ref={scroll}></span>
+                    <span ref={scroll as any}></span>
                     <TextBox scroll={scroll} docPath={getMessagesPath(user1, user2)} />
                 </main>
         }
@@ -89,8 +90,8 @@ export default function ChatRoom() {
 
 async function getUserWithUid(uid: string | null, setUser2: any) {
     const waitingRoomPath = ["waitingRoom"];
-    const q = query(
-        collection(db, ...waitingRoomPath),
+    const q = query(  
+        collection(db, waitingRoomPath.join('/')),
         where("uid", "==", uid)
     );
     const querySnapshot = await getDocs(q);
@@ -100,7 +101,7 @@ async function getUserWithUid(uid: string | null, setUser2: any) {
         setUser2(doc.data());
     });
 }
-function getMessagesPath(user1, user2) {
+function getMessagesPath(user1: any, user2: any): string[] {
     const uidArray = [user1, user2].map(u => u.uid)
     uidArray.sort()
     return ["messages", uidArray.join('-'), "messages"]

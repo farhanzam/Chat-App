@@ -21,7 +21,6 @@ const Welcome = () => {
           onClick={googleSignIn}
           src={GoogleSignin.src}
           alt="sign in with google"
-          type="button"
         />
       </button>
     </main>
