@@ -62,7 +62,7 @@ function addUserToWaitingRoom(user: User, existingUsers: Array<User>) {
   if (existingUsers.map(u => u.uid).includes(user.uid)) {
     return;
   }
-  addDoc(collection(db, ...waitingRoomPath), {
+  addDoc(collection(db, ...(waitingRoomPath as [])), {
     name: user.displayName,
     avatar: user.photoURL,
     uid: user.uid
@@ -71,7 +71,7 @@ function addUserToWaitingRoom(user: User, existingUsers: Array<User>) {
 
 function subscribeToWaitingRoom(otherUsers: any, setOtherUsers: React.Dispatch<React.SetStateAction<any>>) {
   const q = query(
-    collection(db, ...waitingRoomPath),
+    collection(db, ...(waitingRoomPath as [])),
     // orderBy("createdAt", "desc"),
     limit(50)
   );
