@@ -31,7 +31,7 @@ export default function ChatRoom() {
     useEffect(() => {
         if (!user2) return;
         const q = query(
-            collection(db, ...getMessagesPath(user1, user2)),
+            collection(db, ...(getMessagesPath(user1, user2) as [])),
             orderBy("createdAt", "desc"),
             limit(50)
         );
